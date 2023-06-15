@@ -28,6 +28,8 @@ function App() {
     <>
       <h1>Aries Invitation Service</h1>
       <a href="intent://testurl/#Intent;action=android.intent.action.CONNECT;scheme=didcomm;end">Invite!</a>
+      <p>temp gap</p>
+      <a href="https://holdr.jamesebert.dev/invites/invite?oob=testvalue">iOS Invite!</a>
       {invitation && 
         <QRCode
           size={256}
