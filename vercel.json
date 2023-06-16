@@ -1,0 +1,19 @@
+{
+  "rewrites": [
+    {
+      "source": "/invite/:invite",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept",
+          "value": "application/json"
+        }
+      ],
+      "destination": "/api/invites/:invite"
+    },
+    {
+      "source": "/invite/:invite",
+      "destination": "/"
+    }
+  ]
+}

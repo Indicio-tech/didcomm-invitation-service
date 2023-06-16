@@ -18,20 +18,18 @@ export default async function handler(
     switch (request.method) {
       case 'GET':
         if(invite){
-          const shortInvite = await kv.get(invite)
-          response.status(200).json({
-            shortenedUrl: shortInvite
-          });
+          const oobJson = await kv.get(invite)
+          response.status(200).json(oobJson);
         } else{
           response.status(400).send("No invite provided")
         }
         break;
       case 'POST':
-        if(request.body.oob){
-          const oob = request.body.oob
+        if(request.body.oobJson){
+          const oobJson = request.body.oobJson
 
           const shortInvite = createId()
-          await kv.set(shortInvite, oob)
+          await kv.set(shortInvite, JSON.stringify(oobJson))
           response.status(200).json({
             shortenedUrl: shortInvite
           });
