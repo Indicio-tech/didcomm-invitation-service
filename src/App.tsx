@@ -4,6 +4,8 @@ import './App.css'
 
 function App() {
   // Retrieve URL Params
+  const pathname = window.location.pathname
+  console.log("Pathname", pathname)
   const queryParameters = new URLSearchParams(window.location.search)
   const c_iQuery = queryParameters.get("c_i")
   const oobQuery = queryParameters.get("oob")

@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@paralleldrive/cuid2": "^2.2.1",
     "@vercel/kv": "^0.2.1",
     "@vercel/node": "^2.15.1",
     "react": "^18.2.0",
