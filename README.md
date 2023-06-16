@@ -12,3 +12,5 @@ Android Intents work on all the mobile browsers, some browsers will automaticall
 
 ### Notes:
 If the user clicks the link and the app is not installed, the user will be directed to the website, not the app. This likely indicates the app owner should host a webpage providing instructions to install their app.
+
+Will need to handle the case where the browser displays a banner if a user is just on the website and a user clicks on it--this likely should result in a "invite invalid" display or something of that nature.  
