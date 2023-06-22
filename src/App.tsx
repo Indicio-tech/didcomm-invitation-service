@@ -10,7 +10,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/invite/:invite" element={<InvitePage />} />
+          <Route path="/invite/:inviteId" element={<InvitePage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
@@ -32,37 +32,51 @@ const Home = () => {
   )
 }
 
-const InvitePage = () => {
-  const [invitation, setInvitation] = useState<string | undefined>(undefined)
+const launchAndroidIntent = (invitationURL: string) => {
+  window.location.assign(`intent://invite?oob=${invitationURL}#Intent;action=android.intent.action.VIEW;scheme=didcomm;end`);
+}
 
-  useEffect(() => {
-    window.location.assign('intent://testurl/#Intent;action=android.intent.action.CONNECT;scheme=didcomm;end');
-  }, [])
+const InvitePage = () => {
+  const [invitationJSON, setInvitationJSON] = useState<string | undefined>(undefined)
+  const [invitationURL, setInvitationURL] = useState<string | undefined>(undefined)
 
   let params = useParams();
 
   useEffect(() => {
-    // const fetchInvite = async (shortInvite:string) => {
-    //   const response = await fetch(`/api/invites/${shortInvite}`)
-    //   // const response.
-    //   console.log("response:", response)
-    //   setInvitation(undefined)
-    // }
-    if(params.invite){
-      // fetchInvite(params.invite)
-      setInvitation(window.location.href)
+    console.log("Invitation JSON", invitationJSON)
+    console.log("Invitation Base64 URL", invitationURL)
+  }, [invitationJSON, invitationURL])
+
+  useEffect(() => {
+    const fetchInvite = async (inviteId:string) => {
+      const response = await fetch(`/invite/${inviteId}`, {
+        headers: {
+          'Accept': 'application/json'
+        }
+      })
+      const invitationJSON = JSON.stringify(await response.json())
+      setInvitationJSON(invitationJSON)
+
+      const invitationBase64 = btoa(invitationJSON)
+      setInvitationURL(invitationBase64)
+
+      // Attempt to effectively immediately launch Android Intent
+      launchAndroidIntent(invitationBase64)
+    }
+    if(params.inviteId){
+      fetchInvite(params.inviteId)
     }
   }, [])
   return(
     <>
-      <a href="intent://testurl/#Intent;action=android.intent.action.CONNECT;scheme=didcomm;end">Invite!</a>
+      <a href={`intent://invite?oob=${invitationURL}#Intent;action=android.intent.action.VIEW;scheme=didcomm;end`}>Invite!</a>
         <p>temp gap</p>
-        <a href="https://holdr.jamesebert.dev/invites/invite?oob=testvalue">iOS Invite!</a>
-        {invitation && 
+        <a href={`https://holdr.jamesebert.dev/invites/invite?oob=${invitationURL}`}>iOS Invite!</a>
+        {invitationJSON && 
           <QRCode
             size={256}
             style={{ height: "auto", maxWidth: "100%", width: "100%" }}
-            value={invitation}
+            value={window.location.href}
             viewBox={`0 0 256 256`}
           />
         }
