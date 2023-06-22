@@ -10,13 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@paralleldrive/cuid2": "^2.2.1",
     "@vercel/kv": "^0.2.1",
     "@vercel/node": "^2.15.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-qr-code": "^2.0.11",
-    "react-router-dom": "^6.13.0"
+    "react-router-dom": "^6.13.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.37",
@@ -29,5 +29,8 @@
     "eslint-plugin-react-refresh": "^0.3.4",
     "typescript": "^5.0.2",
     "vite": "^4.3.9"
+  },
+  "engines": {
+    "node": ">= 18"
   }
 }

@@ -9,7 +9,7 @@
           "value": "application/json"
         }
       ],
-      "destination": "/api/invites/:invite"
+      "destination": "/api/invite/:invite"
     },
     {
       "source": "/invite/:invite",
