@@ -1,22 +1,27 @@
 import { useEffect, useState } from 'react'
 import QRCode from "react-qr-code";
-import './App.css'
 import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom';
 
 function App() {
-
   return (
     <>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/invite/:inviteId" element={<InvitePage />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-      <p className="created-by">
-        Created by James Ebert & Indicio 
-      </p>
+      <div className='w-full h-screen flex flex-col justify-between'>
+        <div className='w-full h-full justify-center items-center flex'>
+          <div className='w-4/5 h-96 bg-slate-600'></div>
+        </div>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/invite/:inviteId" element={<InvitePage />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+        <div className="w-full align-bottom">
+          <p className="text-sm">
+            Created by James Ebert & Indicio 
+          </p>
+        </div>
+      </div>
     </>
   )
 }
@@ -67,8 +72,14 @@ const InvitePage = () => {
       fetchInvite(params.inviteId)
     }
   }, [])
+
   return(
     <>
+      
+      {/* <div className='w-full flex flex-wrap'>
+        <h1 className='align-text-'>WelcomeWelcomeWelcomeWelcomeWelcomeWelcome</h1>
+        <h1 className='align-text-top'>HelloHelloHelloHelloHelloHelloHello</h1>
+      </div>
       <a href={`intent://invite?oob=${invitationURL}#Intent;action=android.intent.action.VIEW;scheme=didcomm;end`}>Invite!</a>
         <p>temp gap</p>
         <a href={`https://holdr.jamesebert.dev/invites/invite?oob=${invitationURL}`}>iOS Invite!</a>
@@ -79,7 +90,7 @@ const InvitePage = () => {
             value={window.location.href}
             viewBox={`0 0 256 256`}
           />
-        }
+        } */}
     </>
   )
 }
