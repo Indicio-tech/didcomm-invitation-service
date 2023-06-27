@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react'
 import QRCode from 'react-qr-code'
 import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom'
 
-function App() {
+import holdrLogo from './assets/holdr-app-icon.png'
+
+const App = () => {
   return (
     <>
       <div className="flex h-screen w-full flex-col justify-between">
         <div className="flex h-full w-full items-center justify-center">
-          <div className="h-96 w-4/5 bg-slate-600">
+          <div className="w-5/6 bg-white">
             <a
               href="#"
               className="inline-flex items-center justify-center rounded-lg bg-blue-700 px-5 py-3 text-center text-base font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900"
@@ -33,6 +35,13 @@ function App() {
             >
               Learn more
             </a>
+            <button
+              type="button"
+              className="inline-flex w-full items-center rounded-lg bg-white px-3 py-2 text-base font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+            >
+              <img className="mr-2 inline-block h-8 w-8 rounded-lg" src={holdrLogo} alt="" />
+              <p>Connect using Holdr+</p>
+            </button>
           </div>
         </div>
         <BrowserRouter>

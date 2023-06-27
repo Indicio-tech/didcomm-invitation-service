@@ -1,5 +1,9 @@
 # Aries Invitation Service
 
+### TODO:
+
+- [ ] Investigate Android Deep Linking default choice determination mechanism
+
 ## Android Intents
 
 Android Intents work on all the mobile browsers, some browsers will automatically prompt the user instead of requiring a button click on the website (which is preferred):
