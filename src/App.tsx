@@ -3,13 +3,59 @@ import QRCode from 'react-qr-code'
 import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom'
 
 import holdrLogo from './assets/holdr-app-icon.png'
+import bcWalletLogo from './assets/bcwallet-logo.png'
+
+// const ConnectButton = (props: { image: string; name: string }) => {
+//   return (
+//     <a
+//       href="#"
+//       className="flex items-center justify-start overflow-hidden rounded-md bg-gray-700 pr-6 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+//     >
+//       <div className="h-full bg-gray-500 px-3 py-3">
+//         <img className="inline-block h-8 w-8 rounded-lg" src={props.image} alt="" />
+//       </div>
+//       <div className="px-3 py-3">Connect using {props.name}</div>
+//     </a>
+//   )
+// }
+
+// const ConnectButton = (props: { image: string; name: string }) => {
+//   return (
+//     <a
+//       href="#"
+//       className="flex items-center justify-start overflow-hidden rounded-md border-2 border-gray-700 bg-gray-700 pr-6 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+//     >
+//       <div className="h-full rounded-md bg-gray-50 px-2 py-2">
+//         <img className="inline-block h-9 w-9 rounded-full" src={props.image} alt="" />
+//       </div>
+//       <div className="px-3 py-3">Connect using {props.name}</div>
+//     </a>
+//   )
+// }
+
+const ConnectButton = (props: { image: string; name: string }) => {
+  return (
+    <button
+      type="button"
+      className="inline-flex w-full items-center rounded-lg bg-white px-3 py-2 text-base font-semibold text-gray-900 shadow-sm ring-2 ring-inset ring-gray-300 hover:bg-gray-50"
+    >
+      <img
+        className="mr-2 inline-block h-9 w-9 rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.40)]"
+        src={props.image}
+        alt=""
+      />
+
+      <p>Connect using {props.name}</p>
+    </button>
+  )
+}
 
 const App = () => {
   return (
     <>
       <div className="flex h-screen w-full flex-col justify-between">
         <div className="flex h-full w-full items-center justify-center">
-          <div className="w-5/6 bg-white">
+          <div className="w-5/6 bg-white md:w-2/5">
             <a
               href="#"
               className="inline-flex items-center justify-center rounded-lg bg-blue-700 px-5 py-3 text-center text-base font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900"
@@ -35,13 +81,19 @@ const App = () => {
             >
               Learn more
             </a>
-            <button
+            {/* <button
               type="button"
-              className="inline-flex w-full items-center rounded-lg bg-white px-3 py-2 text-base font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+              className="inline-flex w-full items-center rounded-lg bg-white px-3 py-2 text-base font-semibold text-gray-900 shadow-sm ring-2 ring-inset ring-gray-300 hover:bg-gray-50"
             >
-              <img className="mr-2 inline-block h-8 w-8 rounded-lg" src={holdrLogo} alt="" />
+              <img className="mr-2 inline-block h-8 w-8 rounded-full" src={holdrLogo} alt="" />
               <p>Connect using Holdr+</p>
-            </button>
+            </button> */}
+            <div className="mt-6">
+              <ConnectButton image={holdrLogo} name={'Holdr+'} />
+            </div>
+            <div className="mt-6">
+              <ConnectButton image={bcWalletLogo} name={'BC Wallet'} />
+            </div>
           </div>
         </div>
         <BrowserRouter>
