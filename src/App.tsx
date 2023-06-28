@@ -142,27 +142,43 @@ const InvitePage = () => {
   }, [invitationJSON, invitationURL])
 
   useEffect(() => {
-    const fetchInvite = async (inviteId: string) => {
-      const response = await fetch(`/api/invite/${inviteId}`, {
-        headers: {
-          Accept: 'application/json',
-        },
-      })
-      const invitationJSON = JSON.stringify(await response.json())
-      setInvitationJSON(invitationJSON)
+    // Determine Invitation URL
+    if (import.meta.env.VITE_URL_SHORTENING === 'true') {
+      console.log('URL Shortened')
+      // URL Shortening -- fetch invitation using shortened url
+      const fetchInvite = async (inviteId: string) => {
+        const response = await fetch(`/invite/${inviteId}`, {
+          headers: {
+            Accept: 'application/json',
+          },
+        })
+        const invitationJSON = JSON.stringify(await response.json())
+        setInvitationJSON(invitationJSON)
 
-      const invitationBase64 = btoa(invitationJSON)
-      setInvitationURL(invitationBase64)
+        const invitationBase64 = btoa(invitationJSON)
+        setInvitationURL(invitationBase64)
+      }
 
-      // Attempt to effectively immediately launch Android Intent
-      if (isAndroid) {
-        launchAndroidIntent(invitationBase64)
+      if (params.inviteId) {
+        fetchInvite(params.inviteId)
+      }
+    } else {
+      // No URL shortening -- use query paramter for invitation
+      const queryParameters = new URLSearchParams(window.location.search)
+      const oobQuery = queryParameters.get('oob')
+
+      if (oobQuery) {
+        setInvitationURL(oobQuery)
       }
     }
-    if (params.inviteId) {
-      fetchInvite(params.inviteId)
-    }
   }, [])
+
+  // Attempt to effectively immediately launch Android Intent
+  useEffect(() => {
+    if (isAndroid && invitationURL) {
+      launchAndroidIntent(invitationURL)
+    }
+  }, [invitationURL])
 
   const [inviteDetailsVisible, setInviteDetailsVisible] = useState(false)
 
