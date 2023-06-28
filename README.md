@@ -9,6 +9,7 @@
 - [ ] Device detection could use additional testing against a variety of devices to determine edge cases and provide appropriate backup behaviors
 - [ ] Detect an invalid URL and display an appropriate page
 - [ ] Loading Spinner while fetching invitation in shortened URL mode
+- [ ] Determine if we want to and if so update the URL Shortening RFC behavior
 
 ## Android Intents
 

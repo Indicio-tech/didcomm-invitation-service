@@ -8,33 +8,6 @@ import trinsicLogo from './assets/trinsic-logo.png'
 import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
 
 import { isAndroid, isIOS } from 'react-device-detect'
-// const ConnectButton = (props: { image: string; name: string }) => {
-//   return (
-//     <a
-//       href="#"
-//       className="flex items-center justify-start overflow-hidden rounded-md bg-gray-700 pr-6 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
-//     >
-//       <div className="h-full bg-gray-500 px-3 py-3">
-//         <img className="inline-block h-8 w-8 rounded-lg" src={props.image} alt="" />
-//       </div>
-//       <div className="px-3 py-3">Connect using {props.name}</div>
-//     </a>
-//   )
-// }
-
-// const ConnectButton = (props: { image: string; name: string }) => {
-//   return (
-//     <a
-//       href="#"
-//       className="flex items-center justify-start overflow-hidden rounded-md border-2 border-gray-700 bg-gray-700 pr-6 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
-//     >
-//       <div className="h-full rounded-md bg-gray-50 px-2 py-2">
-//         <img className="inline-block h-9 w-9 rounded-full" src={props.image} alt="" />
-//       </div>
-//       <div className="px-3 py-3">Connect using {props.name}</div>
-//     </a>
-//   )
-// }
 
 const ConnectButton = (props: { image: string; name: string; url: string }) => {
   return (
@@ -130,6 +103,33 @@ const AndroidConnectContainer = (props: { deepLinkURL: string }) => {
   )
 }
 
+const InvitationDetails = () => {
+  const [copiedInvite, setCopiedInvite] = useState(false)
+
+  return (
+    <>
+      <QRCode
+        className="m-4 h-auto w-7/12 sm:w-4/12 md:w-3/12 xl:w-2/12"
+        value={window.location.href}
+        viewBox={`0 0 256 256`}
+      />
+      <button
+        type="button"
+        className="inline-flex w-36 justify-center rounded-md bg-green-800 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        onClick={async () => {
+          await navigator.clipboard.writeText(`${window.location.href}`)
+          setCopiedInvite(true)
+          setTimeout(() => {
+            setCopiedInvite(false)
+          }, 5000)
+        }}
+      >
+        {copiedInvite ? 'Copied!' : 'Copy Invite URL'}
+      </button>
+    </>
+  )
+}
+
 const InvitePage = () => {
   const [invitationJSON, setInvitationJSON] = useState<string | undefined>(undefined)
   const [invitationURL, setInvitationURL] = useState<string | undefined>(undefined)
@@ -164,74 +164,53 @@ const InvitePage = () => {
     }
   }, [])
 
-  const [copiedInvite, setCopiedInvite] = useState(false)
   const [inviteDetailsVisible, setInviteDetailsVisible] = useState(false)
 
-  return (
-    <>
-      <div className="mb-6 flex w-full flex-col items-center">
-        <h1 className="text-3xl font-semibold">Accept Invite</h1>
-        {/* TODO: Loading spinner based off of invitation loaded can elimnate the '||' here: */}
-        {isIOS && <IOSAppConnectList invitationURL={invitationURL || ''} />}
-        {isAndroid && (
-          <AndroidConnectContainer
-            deepLinkURL={`intent://invite?oob=${invitationURL}#Intent;action=android.intent.action.VIEW;scheme=didcomm;end`}
-          />
-        )}
-      </div>
-      <div className="mt-2 flex w-5/6 flex-col items-center md:w-2/5">
-        <button
-          className="flex items-center"
-          onClick={() => {
-            setInviteDetailsVisible(!inviteDetailsVisible)
-          }}
-        >
-          {inviteDetailsVisible ? (
-            <ChevronDownIcon className="h-6 w-6" aria-hidden="true" />
-          ) : (
-            <ChevronRightIcon className="h-6 w-6" aria-hidden="true" />
+  // Android / IOS Display
+  if (isAndroid || isIOS) {
+    return (
+      <>
+        <div className="mb-6 flex w-full flex-col items-center">
+          <h1 className="text-center text-3xl font-semibold">Accept Invite</h1>
+          {/* TODO: Loading spinner based off of invitation loaded can elimnate the '||' here: */}
+          {isIOS && <IOSAppConnectList invitationURL={invitationURL || ''} />}
+          {isAndroid && (
+            <AndroidConnectContainer
+              deepLinkURL={`intent://invite?oob=${invitationURL}#Intent;action=android.intent.action.VIEW;scheme=didcomm;end`}
+            />
           )}
-          <h2 className="text-lg font-semibold">Invite Details</h2>
-        </button>
-        {inviteDetailsVisible ? (
-          <>
-            <QRCode className="m-4 h-auto w-7/12" value={window.location.href} viewBox={`0 0 256 256`} />
-            <button
-              type="button"
-              className="inline-flex w-36 justify-center rounded-md bg-green-800 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              onClick={async () => {
-                await navigator.clipboard.writeText(`${window.location.href}`)
-                setCopiedInvite(true)
-                setTimeout(() => {
-                  setCopiedInvite(false)
-                }, 5000)
-              }}
-            >
-              {copiedInvite ? 'Copied!' : 'Copy Invite URL'}
-            </button>
-          </>
-        ) : (
-          <></>
-        )}
-      </div>
-
-      {/* <div className='w-full flex flex-wrap'>
-        <h1 className='align-text-'>WelcomeWelcomeWelcomeWelcomeWelcomeWelcome</h1>
-        <h1 className='align-text-top'>HelloHelloHelloHelloHelloHelloHello</h1>
-      </div>
-      <a href={`intent://invite?oob=${invitationURL}#Intent;action=android.intent.action.VIEW;scheme=didcomm;end`}>Invite!</a>
-        <p>temp gap</p>
-        <a href={`https://holdr.jamesebert.dev/invites/invite?oob=${invitationURL}`}>iOS Invite!</a>
-        {invitationJSON && 
-          <QRCode
-            size={256}
-            style={{ height: "auto", maxWidth: "100%", width: "100%" }}
-            value={window.location.href}
-            viewBox={`0 0 256 256`}
-          />
-        } */}
-    </>
-  )
+        </div>
+        <div className="mt-2 flex w-5/6 flex-col items-center md:w-2/5">
+          <button
+            className="flex items-center"
+            onClick={() => {
+              setInviteDetailsVisible(!inviteDetailsVisible)
+            }}
+          >
+            {inviteDetailsVisible ? (
+              <ChevronDownIcon className="h-6 w-6" aria-hidden="true" />
+            ) : (
+              <ChevronRightIcon className="h-6 w-6" aria-hidden="true" />
+            )}
+            <h2 className="text-lg font-semibold">Invite Details</h2>
+          </button>
+          {inviteDetailsVisible ? <InvitationDetails /> : <></>}
+        </div>
+      </>
+    )
+    // Default Display / Computer Display
+  } else {
+    return (
+      <>
+        <div className="mb-6 flex w-full flex-col items-center">
+          <h1 className="text-center text-4xl font-bold">Accept Invite</h1>
+          <InvitationDetails />
+        </div>
+        <p className="text-center">You've been invited to connect</p>
+        <p className="text-center">Scan the QR Code using your mobile device</p>
+      </>
+    )
+  }
 }
 
 const NotFound = () => {
