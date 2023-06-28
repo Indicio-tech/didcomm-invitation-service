@@ -14,6 +14,10 @@
     {
       "source": "/invite/:invite",
       "destination": "/"
+    },
+    {
+      "source": "/invite",
+      "destination": "/"
     }
   ]
 }

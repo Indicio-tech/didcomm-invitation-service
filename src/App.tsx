@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import QRCode from 'react-qr-code'
-import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom'
+import { BrowserRouter, Route, Routes, useParams, useSearchParams } from 'react-router-dom'
 
 import holdrLogo from './assets/holdr-app-icon.png'
 import bcWalletLogo from './assets/bcwallet-logo.png'
@@ -33,7 +33,8 @@ const App = () => {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/invite/:inviteId" element={<InvitePage />} />
+              <Route path="/invite" element={<InvitePage />} />
+              <Route path="/invite/:inviteId" element={<ShortURLInvitePage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
@@ -61,29 +62,23 @@ const Home = () => {
   )
 }
 
-const launchAndroidIntent = (invitationURL: string) => {
-  window.location.assign(
-    `intent://invite?oob=${invitationURL}#Intent;action=android.intent.action.VIEW;scheme=didcomm;end`,
-  )
-}
-
-const IOSAppConnectList = (props: { invitationURL: string }) => {
+const IOSAppConnectList = (props: { base64Invite: string }) => {
   return (
     <div className="my-5 flex w-5/6 flex-col items-center md:w-2/5">
       <ConnectButton
         image={holdrLogo}
         name={'Holdr+'}
-        url={`https://holdr.jamesebert.dev/invites/invite?oob=${props.invitationURL}`}
+        url={`https://holdr.jamesebert.dev/invites/invite?oob=${props.base64Invite}`}
       />
       <ConnectButton
         image={trinsicLogo}
         name={'Trinsic'}
-        url={`https://holdr.jamesebert.dev/invites/invite?oob=${props.invitationURL}`}
+        url={`https://holdr.jamesebert.dev/invites/invite?oob=${props.base64Invite}`}
       />
       <ConnectButton
         image={bcWalletLogo}
         name={'BC Wallet'}
-        url={`https://holdr.jamesebert.dev/invites/invite?oob=${props.invitationURL}`}
+        url={`https://holdr.jamesebert.dev/invites/invite?oob=${props.base64Invite}`}
       />
       <button className="mt-6 text-center text-sm underline">See More Wallets</button>
     </div>
@@ -130,39 +125,15 @@ const InvitationDetails = () => {
   )
 }
 
-const InvitePage = () => {
-  const [invitationJSON, setInvitationJSON] = useState<string | undefined>(undefined)
-  const [invitationURL, setInvitationURL] = useState<string | undefined>(undefined)
-
-  let params = useParams()
-
+const InviteDisplay = (props: { base64Invite: string }) => {
+  const deepLinkURL = `intent://invite?oob=${props.base64Invite}#Intent;action=android.intent.action.VIEW;scheme=didcomm;end`
+  // Attempt to effectively immediately launch Android Intent
   useEffect(() => {
-    console.log('Invitation JSON', invitationJSON)
-    console.log('Invitation Base64 URL', invitationURL)
-  }, [invitationJSON, invitationURL])
-
-  useEffect(() => {
-    const fetchInvite = async (inviteId: string) => {
-      const response = await fetch(`/api/invite/${inviteId}`, {
-        headers: {
-          Accept: 'application/json',
-        },
-      })
-      const invitationJSON = JSON.stringify(await response.json())
-      setInvitationJSON(invitationJSON)
-
-      const invitationBase64 = btoa(invitationJSON)
-      setInvitationURL(invitationBase64)
-
-      // Attempt to effectively immediately launch Android Intent
-      if (isAndroid) {
-        launchAndroidIntent(invitationBase64)
-      }
+    if (isAndroid && props.base64Invite) {
+      console.log('On Android, attempting to immediately open a wallet via Android Intent')
+      window.location.assign(deepLinkURL)
     }
-    if (params.inviteId) {
-      fetchInvite(params.inviteId)
-    }
-  }, [])
+  }, [props.base64Invite])
 
   const [inviteDetailsVisible, setInviteDetailsVisible] = useState(false)
 
@@ -173,12 +144,8 @@ const InvitePage = () => {
         <div className="mb-6 flex w-full flex-col items-center">
           <h1 className="text-center text-3xl font-semibold">Accept Invite</h1>
           {/* TODO: Loading spinner based off of invitation loaded can elimnate the '||' here: */}
-          {isIOS && <IOSAppConnectList invitationURL={invitationURL || ''} />}
-          {isAndroid && (
-            <AndroidConnectContainer
-              deepLinkURL={`intent://invite?oob=${invitationURL}#Intent;action=android.intent.action.VIEW;scheme=didcomm;end`}
-            />
-          )}
+          {isIOS && <IOSAppConnectList base64Invite={props.base64Invite} />}
+          {isAndroid && <AndroidConnectContainer deepLinkURL={deepLinkURL} />}
         </div>
         <div className="mt-2 flex w-5/6 flex-col items-center md:w-2/5">
           <button
@@ -210,6 +177,89 @@ const InvitePage = () => {
         <p className="text-center">Scan the QR Code using your mobile device</p>
       </>
     )
+  }
+}
+
+/**
+ * Invite Page, URL shortening, relies on having an API to query invite ids against
+ */
+const ShortURLInvitePage = () => {
+  const [base64Invite, setBase64Invite] = useState<string | undefined>(undefined)
+  const [error, setError] = useState<Error | undefined>(undefined)
+
+  let params = useParams()
+
+  useEffect(() => {
+    // URL Shortening -- fetch JSON invitation using shortened url (inviteId)
+    const fetchInvite = async (inviteId: string | undefined) => {
+      try {
+        if (!inviteId) {
+          const newError = new Error('No InviteId Found in URL')
+          console.warn(newError)
+          setError(newError)
+          return
+        }
+
+        // Note -- For URL shortening, we need /invite/{inviteId} to return a web page, but when requesting JSON content, we need to return the Invitation JSON. In order to accomplish this when using Vercel for the API, the usage of filtering the header via 'has' does not work in development: "Using has does not yet work locally while using vercel dev, but does work when deployed.". So, when in development we manually route to the api that the 'has' functionality would provide. Learn more here: https://vercel.com/docs/concepts/projects/project-configuration#rewrites
+        const apiRoute = `${import.meta.env.DEV ? '/api' : ''}/invite/${inviteId}`
+        console.log('Getting Invitation', { apiRoute, inviteId })
+        const response = await fetch(apiRoute, {
+          headers: {
+            Accept: 'application/json',
+          },
+        })
+
+        if (response.status === 404) {
+          const newError = new Error(`No Invite Found for inviteID ${inviteId}`)
+          console.warn(newError)
+          setError(newError)
+        } else {
+          const invitationJSON = JSON.stringify(await response.json())
+          // Base64 Stringify invitation JSON
+          const invitationBase64 = btoa(invitationJSON)
+
+          setBase64Invite(invitationBase64)
+          console.log('Base64 Invite:', invitationBase64)
+        }
+      } catch (error) {
+        const newError = new Error(`Error fetching invitation: '${error instanceof Error && error.message}`)
+        console.warn(newError, error)
+        setError(newError)
+      }
+    }
+    fetchInvite(params.inviteId)
+  }, [])
+
+  if (error) {
+    return (
+      <>
+        <p className="text-center">Error Loading Invitation</p>
+        <p className="text-center">`{error.message}`</p>
+      </>
+    )
+  }
+
+  if (base64Invite) {
+    return <InviteDisplay base64Invite={base64Invite} />
+  } else {
+    // TODO: Improve Loading UI
+    return <p className="text-center">Loading Invite...</p>
+  }
+}
+
+/**
+ * Invite Page, no URL shortening, relies on having a oob query parameter in the url
+ */
+const InvitePage = () => {
+  let [searchParams] = useSearchParams()
+  const oobQuery = searchParams.get('oob')
+  console.log('Base64 Invite:', oobQuery)
+
+  if (oobQuery) {
+    return <InviteDisplay base64Invite={oobQuery} />
+  } else {
+    console.warn('OOB query parameter does not exist')
+    return <p className="text-center">Something went wrong, please try again</p>
   }
 }
 

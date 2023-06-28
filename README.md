@@ -10,6 +10,7 @@
 - [ ] Detect an invalid URL and display an appropriate page
 - [ ] Loading Spinner while fetching invitation in shortened URL mode
 - [ ] Determine if we want to and if so update the URL Shortening RFC behavior
+- [ ] (Low Urgency) React Strict Mode in dev mode causes Network error on Androids by attempting to navigate to deep link/android intent twice
 
 ## Android Intents
 
