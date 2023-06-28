@@ -3,6 +3,7 @@
 ### TODO:
 
 - [ ] Investigate Android Deep Linking default choice determination mechanism
+- [ ] App search mechanism (once a large number of apps have been registered)
 
 ## Android Intents
 

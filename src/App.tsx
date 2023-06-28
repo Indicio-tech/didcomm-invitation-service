@@ -5,6 +5,7 @@ import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom'
 import holdrLogo from './assets/holdr-app-icon.png'
 import bcWalletLogo from './assets/bcwallet-logo.png'
 import trinsicLogo from './assets/trinsic-logo.png'
+import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
 
 // const ConnectButton = (props: { image: string; name: string }) => {
 //   return (
@@ -38,7 +39,7 @@ const ConnectButton = (props: { image: string; name: string; url: string }) => {
   return (
     <a
       href={props.url}
-      className="inline-flex w-full max-w-sm items-center rounded-lg bg-white px-3 py-2 text-base font-semibold text-gray-700 shadow-sm ring-2 ring-inset ring-gray-300 hover:bg-gray-50"
+      className="mt-3 inline-flex w-full max-w-sm items-center rounded-lg bg-white px-3 py-2 text-base font-semibold text-gray-700 shadow-sm ring-2 ring-inset ring-gray-300 hover:bg-gray-50"
     >
       <img
         className="mr-2 inline-block h-9 w-9 rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.40)]"
@@ -124,33 +125,67 @@ const InvitePage = () => {
     }
   }, [])
 
+  const [copiedInvite, setCopiedInvite] = useState(false)
+  const [inviteDetailsVisible, setInviteDetailsVisible] = useState(false)
+
   return (
     <>
-      <h1 className="text-3xl font-semibold">Accept Invite</h1>
-      <div className="my-5 w-5/6 md:w-2/5">
-        <div className="mt-3">
+      <div className="mb-6 flex w-full flex-col items-center">
+        <h1 className="text-3xl font-semibold">Accept Invite</h1>
+        <div className="my-5 flex w-5/6 flex-col items-center md:w-2/5">
           <ConnectButton
             image={holdrLogo}
             name={'Holdr+'}
             url={`https://holdr.jamesebert.dev/invites/invite?oob=${invitationURL}`}
           />
-        </div>
-        <div className="mt-3">
           <ConnectButton
             image={trinsicLogo}
             name={'Trinsic'}
             url={`https://holdr.jamesebert.dev/invites/invite?oob=${invitationURL}`}
           />
-        </div>
-        <div className="mt-3">
           <ConnectButton
             image={bcWalletLogo}
             name={'BC Wallet'}
             url={`https://holdr.jamesebert.dev/invites/invite?oob=${invitationURL}`}
           />
         </div>
+        <button className="text-center text-sm underline">See More Wallets</button>
       </div>
-      <button className="text-center text-sm underline">See More Wallets</button>
+      <div className="mt-2 flex w-5/6 flex-col items-center md:w-2/5">
+        <button
+          className="flex items-center"
+          onClick={() => {
+            setInviteDetailsVisible(!inviteDetailsVisible)
+          }}
+        >
+          {inviteDetailsVisible ? (
+            <ChevronDownIcon className="h-6 w-6" aria-hidden="true" />
+          ) : (
+            <ChevronRightIcon className="h-6 w-6" aria-hidden="true" />
+          )}
+          <h2 className="text-lg font-semibold">Invite Details</h2>
+        </button>
+        {inviteDetailsVisible ? (
+          <>
+            <QRCode className="m-4 h-auto w-7/12" value={window.location.href} viewBox={`0 0 256 256`} />
+            <button
+              type="button"
+              className="inline-flex w-36 justify-center rounded-md bg-green-800 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              onClick={async () => {
+                await navigator.clipboard.writeText(`${window.location.href}`)
+                setCopiedInvite(true)
+                setTimeout(() => {
+                  setCopiedInvite(false)
+                }, 5000)
+              }}
+            >
+              {copiedInvite ? 'Copied!' : 'Copy Invite URL'}
+            </button>
+          </>
+        ) : (
+          <></>
+        )}
+      </div>
 
       {/* <div className='w-full flex flex-wrap'>
         <h1 className='align-text-'>WelcomeWelcomeWelcomeWelcomeWelcomeWelcome</h1>
