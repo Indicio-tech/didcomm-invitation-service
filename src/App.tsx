@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom'
 
 import holdrLogo from './assets/holdr-app-icon.png'
 import bcWalletLogo from './assets/bcwallet-logo.png'
+import trinsicLogo from './assets/trinsic-logo.png'
 
 // const ConnectButton = (props: { image: string; name: string }) => {
 //   return (
@@ -33,20 +34,19 @@ import bcWalletLogo from './assets/bcwallet-logo.png'
 //   )
 // }
 
-const ConnectButton = (props: { image: string; name: string }) => {
+const ConnectButton = (props: { image: string; name: string; url: string }) => {
   return (
-    <button
-      type="button"
-      className="inline-flex w-full items-center rounded-lg bg-white px-3 py-2 text-base font-semibold text-gray-900 shadow-sm ring-2 ring-inset ring-gray-300 hover:bg-gray-50"
+    <a
+      href={props.url}
+      className="inline-flex w-full max-w-sm items-center rounded-lg bg-white px-3 py-2 text-base font-semibold text-gray-700 shadow-sm ring-2 ring-inset ring-gray-300 hover:bg-gray-50"
     >
       <img
         className="mr-2 inline-block h-9 w-9 rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.40)]"
         src={props.image}
         alt=""
       />
-
-      <p>Connect using {props.name}</p>
-    </button>
+      <p className="text-left">Connect using {props.name}</p>
+    </a>
   )
 }
 
@@ -54,57 +54,23 @@ const App = () => {
   return (
     <>
       <div className="flex h-screen w-full flex-col justify-between">
-        <div className="flex h-full w-full items-center justify-center">
-          <div className="w-5/6 bg-white md:w-2/5">
-            <a
-              href="#"
-              className="inline-flex items-center justify-center rounded-lg bg-blue-700 px-5 py-3 text-center text-base font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900"
-            >
-              Get started
-              <svg
-                aria-hidden="true"
-                className="-mr-1 ml-2 h-4 w-4"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                  clip-rule="evenodd"
-                ></path>
-              </svg>
-            </a>
-            <a
-              href="#"
-              className="inline-flex items-center justify-center rounded-lg border border-white px-5 py-3 text-center text-base font-medium text-white hover:bg-gray-100 hover:text-gray-900 focus:ring-4 focus:ring-gray-400"
-            >
+        <div className="flex h-full w-full flex-col items-center justify-center">
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/invite/:inviteId" element={<InvitePage />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </div>
+
+        <div className="my-1 w-full align-bottom">
+          <p className="text-center text-sm">
+            Aries Invitation Service -{' '}
+            <a href="https://github.com/JamesKEbert/aries-invitation-service" className=" underline">
               Learn more
             </a>
-            {/* <button
-              type="button"
-              className="inline-flex w-full items-center rounded-lg bg-white px-3 py-2 text-base font-semibold text-gray-900 shadow-sm ring-2 ring-inset ring-gray-300 hover:bg-gray-50"
-            >
-              <img className="mr-2 inline-block h-8 w-8 rounded-full" src={holdrLogo} alt="" />
-              <p>Connect using Holdr+</p>
-            </button> */}
-            <div className="mt-6">
-              <ConnectButton image={holdrLogo} name={'Holdr+'} />
-            </div>
-            <div className="mt-6">
-              <ConnectButton image={bcWalletLogo} name={'BC Wallet'} />
-            </div>
-          </div>
-        </div>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/invite/:inviteId" element={<InvitePage />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-        <div className="w-full align-bottom">
-          <p className="text-sm">Created by James Ebert & Indicio</p>
+          </p>
         </div>
       </div>
     </>
@@ -160,6 +126,32 @@ const InvitePage = () => {
 
   return (
     <>
+      <h1 className="text-3xl font-semibold">Accept Invite</h1>
+      <div className="my-5 w-5/6 md:w-2/5">
+        <div className="mt-3">
+          <ConnectButton
+            image={holdrLogo}
+            name={'Holdr+'}
+            url={`https://holdr.jamesebert.dev/invites/invite?oob=${invitationURL}`}
+          />
+        </div>
+        <div className="mt-3">
+          <ConnectButton
+            image={trinsicLogo}
+            name={'Trinsic'}
+            url={`https://holdr.jamesebert.dev/invites/invite?oob=${invitationURL}`}
+          />
+        </div>
+        <div className="mt-3">
+          <ConnectButton
+            image={bcWalletLogo}
+            name={'BC Wallet'}
+            url={`https://holdr.jamesebert.dev/invites/invite?oob=${invitationURL}`}
+          />
+        </div>
+      </div>
+      <button className="text-center text-sm underline">See More Wallets</button>
+
       {/* <div className='w-full flex flex-wrap'>
         <h1 className='align-text-'>WelcomeWelcomeWelcomeWelcomeWelcomeWelcome</h1>
         <h1 className='align-text-top'>HelloHelloHelloHelloHelloHelloHello</h1>
