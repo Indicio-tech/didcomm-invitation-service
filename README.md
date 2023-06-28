@@ -2,8 +2,13 @@
 
 ### TODO:
 
-- [ ] Investigate Android Deep Linking default choice determination mechanism
+- [ ] Investigate Android Deep Linking default choice determination mechanism (James)
 - [ ] App search mechanism (once a large number of apps have been registered)
+- [ ] App list file configuration
+  - [ ] External Hosting of app list file -- didcomm.org ?
+- [ ] Device detection could use additional testing against a variety of devices to determine edge cases and provide appropriate backup behaviors
+- [ ] Detect an invalid URL and display an appropriate page
+- [ ] Loading Spinner while fetching invitation in shortened URL mode
 
 ## Android Intents
 

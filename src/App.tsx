@@ -7,6 +7,7 @@ import bcWalletLogo from './assets/bcwallet-logo.png'
 import trinsicLogo from './assets/trinsic-logo.png'
 import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
 
+import { isAndroid, isIOS } from 'react-device-detect'
 // const ConnectButton = (props: { image: string; name: string }) => {
 //   return (
 //     <a
@@ -93,6 +94,42 @@ const launchAndroidIntent = (invitationURL: string) => {
   )
 }
 
+const IOSAppConnectList = (props: { invitationURL: string }) => {
+  return (
+    <div className="my-5 flex w-5/6 flex-col items-center md:w-2/5">
+      <ConnectButton
+        image={holdrLogo}
+        name={'Holdr+'}
+        url={`https://holdr.jamesebert.dev/invites/invite?oob=${props.invitationURL}`}
+      />
+      <ConnectButton
+        image={trinsicLogo}
+        name={'Trinsic'}
+        url={`https://holdr.jamesebert.dev/invites/invite?oob=${props.invitationURL}`}
+      />
+      <ConnectButton
+        image={bcWalletLogo}
+        name={'BC Wallet'}
+        url={`https://holdr.jamesebert.dev/invites/invite?oob=${props.invitationURL}`}
+      />
+      <button className="mt-6 text-center text-sm underline">See More Wallets</button>
+    </div>
+  )
+}
+
+const AndroidConnectContainer = (props: { deepLinkURL: string }) => {
+  return (
+    <div className="my-5 flex w-5/6 flex-col items-center md:w-2/5">
+      <a
+        href={props.deepLinkURL}
+        className="inline-flex justify-center rounded-md bg-green-800 px-2 py-2 font-semibold text-white shadow-sm hover:bg-green-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+      >
+        Connect on Android
+      </a>
+    </div>
+  )
+}
+
 const InvitePage = () => {
   const [invitationJSON, setInvitationJSON] = useState<string | undefined>(undefined)
   const [invitationURL, setInvitationURL] = useState<string | undefined>(undefined)
@@ -106,7 +143,7 @@ const InvitePage = () => {
 
   useEffect(() => {
     const fetchInvite = async (inviteId: string) => {
-      const response = await fetch(`/invite/${inviteId}`, {
+      const response = await fetch(`/api/invite/${inviteId}`, {
         headers: {
           Accept: 'application/json',
         },
@@ -118,7 +155,9 @@ const InvitePage = () => {
       setInvitationURL(invitationBase64)
 
       // Attempt to effectively immediately launch Android Intent
-      launchAndroidIntent(invitationBase64)
+      if (isAndroid) {
+        launchAndroidIntent(invitationBase64)
+      }
     }
     if (params.inviteId) {
       fetchInvite(params.inviteId)
@@ -132,24 +171,13 @@ const InvitePage = () => {
     <>
       <div className="mb-6 flex w-full flex-col items-center">
         <h1 className="text-3xl font-semibold">Accept Invite</h1>
-        <div className="my-5 flex w-5/6 flex-col items-center md:w-2/5">
-          <ConnectButton
-            image={holdrLogo}
-            name={'Holdr+'}
-            url={`https://holdr.jamesebert.dev/invites/invite?oob=${invitationURL}`}
+        {/* TODO: Loading spinner based off of invitation loaded can elimnate the '||' here: */}
+        {isIOS && <IOSAppConnectList invitationURL={invitationURL || ''} />}
+        {isAndroid && (
+          <AndroidConnectContainer
+            deepLinkURL={`intent://invite?oob=${invitationURL}#Intent;action=android.intent.action.VIEW;scheme=didcomm;end`}
           />
-          <ConnectButton
-            image={trinsicLogo}
-            name={'Trinsic'}
-            url={`https://holdr.jamesebert.dev/invites/invite?oob=${invitationURL}`}
-          />
-          <ConnectButton
-            image={bcWalletLogo}
-            name={'BC Wallet'}
-            url={`https://holdr.jamesebert.dev/invites/invite?oob=${invitationURL}`}
-          />
-        </div>
-        <button className="text-center text-sm underline">See More Wallets</button>
+        )}
       </div>
       <div className="mt-2 flex w-5/6 flex-col items-center md:w-2/5">
         <button
