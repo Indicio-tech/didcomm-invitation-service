@@ -180,19 +180,12 @@ const InviteDisplay = (props: { base64Invite: string }) => {
   }
 }
 
-enum PageState {
-  Loading,
-  Error,
-  NoInvitationFound,
-  ContentDisplay,
-}
-
 /**
  * Invite Page, URL shortening, relies on having an API to query invite ids against
  */
 const ShortURLInvitePage = () => {
   const [base64Invite, setBase64Invite] = useState<string | undefined>(undefined)
-  const [pageState, setPageState] = useState<PageState>(PageState.Loading)
+  const [error, setError] = useState<Error | undefined>(undefined)
 
   let params = useParams()
 
@@ -201,7 +194,10 @@ const ShortURLInvitePage = () => {
     const fetchInvite = async (inviteId: string | undefined) => {
       try {
         if (!inviteId) {
-          throw new Error('No InviteId provided')
+          const newError = new Error('No InviteId Found in URL')
+          console.warn(newError)
+          setError(newError)
+          return
         }
 
         // Note -- For URL shortening, we need /invite/{inviteId} to return a web page, but when requesting JSON content, we need to return the Invitation JSON. In order to accomplish this when using Vercel for the API, the usage of filtering the header via 'has' does not work in development: "Using has does not yet work locally while using vercel dev, but does work when deployed.". So, when in development we manually route to the api that the 'has' functionality would provide. Learn more here: https://vercel.com/docs/concepts/projects/project-configuration#rewrites
@@ -214,8 +210,9 @@ const ShortURLInvitePage = () => {
         })
 
         if (response.status === 404) {
-          console.warn(`No Invitation Found for inviteID ${inviteId}`)
-          setPageState(PageState.NoInvitationFound)
+          const newError = new Error(`No Invite Found for inviteID ${inviteId}`)
+          console.warn(newError)
+          setError(newError)
         } else {
           const invitationJSON = JSON.stringify(await response.json())
           // Base64 Stringify invitation JSON
@@ -223,29 +220,30 @@ const ShortURLInvitePage = () => {
 
           setBase64Invite(invitationBase64)
           console.log('Base64 Invite:', invitationBase64)
-          setPageState(PageState.ContentDisplay)
         }
       } catch (error) {
-        console.warn('Error fetching invitation', error)
-        setPageState(PageState.Error)
+        const newError = new Error(`Error fetching invitation: '${error instanceof Error && error.message}`)
+        console.warn(newError, error)
+        setError(newError)
       }
     }
     fetchInvite(params.inviteId)
   }, [])
 
-  switch (pageState) {
-    case PageState.ContentDisplay:
-      if (base64Invite) {
-        return <InviteDisplay base64Invite={base64Invite} />
-      }
-    case PageState.Error:
-      return <p>Error display invite, please try again</p>
-    case PageState.NoInvitationFound:
-      return <p>Error, no invite found </p>
-    case PageState.Loading:
+  if (error) {
+    return (
+      <>
+        <p className="text-center">Error Loading Invitation</p>
+        <p className="text-center">`{error.message}`</p>
+      </>
+    )
+  }
+
+  if (base64Invite) {
+    return <InviteDisplay base64Invite={base64Invite} />
+  } else {
     // TODO: Improve Loading UI
-    default:
-      return <p>Loading Invite...</p>
+    return <p className="text-center">Loading Invite...</p>
   }
 }
 
@@ -261,7 +259,7 @@ const InvitePage = () => {
     return <InviteDisplay base64Invite={oobQuery} />
   } else {
     console.warn('OOB query parameter does not exist')
-    return <p>Something went wrong, please try again</p>
+    return <p className="text-center">Something went wrong, please try again</p>
   }
 }
 
