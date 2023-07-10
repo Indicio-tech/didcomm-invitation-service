@@ -1,0 +1,22 @@
+{
+  "apps": [
+    {
+      "name": "Holdr+",
+      "iOSURL": "https://holdr.jamesebert.dev/invites/invite",
+      "appIconURL": "https://holdr.jamesebert.dev/holdr-app-icon.png",
+      "iOSBundleIdentifier": "tech.indicio.holdr"
+    },
+    {
+      "name": "BC Wallet",
+      "iOSURL": "https://holdr.jamesebert.dev/invites/invite",
+      "appIconURL": "https://holdr.jamesebert.dev/bcwallet-logo.png",
+      "iOSBundleIdentifier": "org.example.bcwallet"
+    },
+    {
+      "name": "Trinsic",
+      "iOSURL": "https://holdr.jamesebert.dev/invites/invite",
+      "appIconURL": "https://holdr.jamesebert.dev/trinsic-logo.png",
+      "iOSBundleIdentifier": "org.example.trinsic"
+    }
+  ]
+}

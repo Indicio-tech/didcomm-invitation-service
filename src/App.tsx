@@ -2,12 +2,13 @@ import { useEffect, useState } from 'react'
 import QRCode from 'react-qr-code'
 import { BrowserRouter, Route, Routes, useParams, useSearchParams } from 'react-router-dom'
 
-import holdrLogo from './assets/holdr-app-icon.png'
 import bcWalletLogo from './assets/bcwallet-logo.png'
 import trinsicLogo from './assets/trinsic-logo.png'
 import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
 
 import { isAndroid, isIOS } from 'react-device-detect'
+
+import AppConfigs from './appConfigs.json'
 
 const ConnectButton = (props: { image: string; name: string; url: string }) => {
   return (
@@ -62,24 +63,26 @@ const Home = () => {
   )
 }
 
+type appDefinition = {
+  name: string
+  iOSURL: string
+  appIconURL: string
+  iOSBundleIdentifier: string
+}
+
 const IOSAppConnectList = (props: { base64Invite: string }) => {
   return (
     <div className="my-5 flex w-5/6 flex-col items-center md:w-2/5">
-      <ConnectButton
-        image={holdrLogo}
-        name={'Holdr+'}
-        url={`https://holdr.jamesebert.dev/invites/invite?oob=${props.base64Invite}`}
-      />
-      <ConnectButton
-        image={trinsicLogo}
-        name={'Trinsic'}
-        url={`https://holdr.jamesebert.dev/invites/invite?oob=${props.base64Invite}`}
-      />
-      <ConnectButton
-        image={bcWalletLogo}
-        name={'BC Wallet'}
-        url={`https://holdr.jamesebert.dev/invites/invite?oob=${props.base64Invite}`}
-      />
+      {AppConfigs.apps.map((app: appDefinition) => {
+        return (
+          <ConnectButton
+            key={app.iOSBundleIdentifier}
+            image={app.appIconURL}
+            name={app.name}
+            url={`${app.iOSURL}?oob=${props.base64Invite}`}
+          />
+        )
+      })}
       <button className="mt-6 text-center text-sm underline">See More Wallets</button>
     </div>
   )
