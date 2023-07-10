@@ -42,7 +42,7 @@ const App = () => {
 
         <div className="my-1 w-full align-bottom">
           <p className="text-center text-sm">
-            Aries Invitation Service -{' '}
+            DIDComm Invitation Service -{' '}
             <a href="https://github.com/JamesKEbert/aries-invitation-service" className=" underline">
               Learn more
             </a>
@@ -56,7 +56,7 @@ const App = () => {
 const Home = () => {
   return (
     <>
-      <h1>Aries Invitation Service</h1>
+      <h1>DIDComm Invitation Service</h1>
       <p>Learn More Soon!</p>
     </>
   )
