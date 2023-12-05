@@ -1,0 +1,34 @@
+## Traditional Deeplink
+
+didcomm://invite?oob={oob_invite_here}
+
+Downsides:
+
+- No backup URL (if no apps installed or using on desktop)
+- No choice of app on iOS (the behavior is undefined--appears to be the first app installed that supports the `didcomm` scheme)
+- Custom `didcomm` scheme is not always recognized as a link (when copying & pasting, etc)
+
+## Android Intents
+
+`intent://invite?oob={oob_invite_here}#Intent;action=android.intent.action.VIEW;scheme=didcomm;end`
+
+Example:
+
+intent://invite?oob=eyJAdHlwZSI6ICJkaWQ6c292OkJ6Q2JzTlloTXJqSGlxWkRUVUFTSGc7c3BlYy9vdXQtb2YtYmFuZC8xLjAvaW52aXRhdGlvbiIsICJAaWQiOiAiNTk2YzRjZTItNWI0MS00MmY1LWE0ZWEtYzc5NjdhNGEzN2RkIiwgImhhbmRzaGFrZV9wcm90b2NvbHMiOiBbImRpZDpzb3Y6QnpDYnNOWWhNcmpIaXFaRFRVQVNIZztzcGVjL2Nvbm5lY3Rpb25zLzEuMCJdLCAic2VydmljZXMiOiBbeyJpZCI6ICIjaW5saW5lIiwgInR5cGUiOiAiZGlkLWNvbW11bmljYXRpb24iLCAicmVjaXBpZW50S2V5cyI6IFsiZGlkOmtleTp6Nk1rcUdQRDJZTDZXTXFRU251a0NxVDhoSDg2cTY4ZWJOcnJhR25VR2pMR1BVTkEiXSwgInJvdXRpbmdLZXlzIjogWyJkaWQ6a2V5Ono2TWtvMXRSYjZTS041Q1B1OTl5a2lRTU5abTh2VWNKZHlQU0JqNno4VUZTcVV1WiIsICJkaWQ6a2V5Ono2TWtmZlJEZ2JoNkdMTDV6QVhqaHI2MWMxd0hlVDlNNHpwTGFTUUJ5UVF2cWpDVCJdLCAic2VydmljZUVuZHBvaW50IjogImh0dHBzOi8vcHJvdmVuLm1lZGlhdG9yLmluZGljaW90ZWNoLmlvIn1dLCAibGFiZWwiOiAiUHJvdmVuIn0=#Intent;action=android.intent.action.VIEW;scheme=didcomm;end
+
+Notes/Downsides:
+
+- Android Specific
+- Unfamiliar URL format for end user
+
+## IOS Universal Links
+
+`https://holdr.jamesebert.dev/invites/invite?oob={oob_invite_here}`
+
+Example:
+
+https://holdr.jamesebert.dev/invites/invite?oob=eyJAdHlwZSI6ImRpZDpzb3Y6QnpDYnNOWWhNcmpIaXFaRFRVQVNIZztzcGVjL291dC1vZi1iYW5kLzEuMC9pbnZpdGF0aW9uIiwiQGlkIjoiNzcxNmE0OWItZDBhZS00ZjkwLTgyMmMtYzNmOGQwMjQ2Mzg2IiwiaGFuZHNoYWtlX3Byb3RvY29scyI6WyJkaWQ6c292OkJ6Q2JzTlloTXJqSGlxWkRUVUFTSGc7c3BlYy9jb25uZWN0aW9ucy8xLjAiXSwic2VydmljZXMiOlt7ImlkIjoiI2lubGluZSIsInR5cGUiOiJkaWQtY29tbXVuaWNhdGlvbiIsInJlY2lwaWVudEtleXMiOlsiZGlkOmtleTp6Nk1rdVBhNnZVSEF5TkNyRk1rVDFtenhCTVVieTZpRXJEeXR2WlpkejlGMzdhUkUiXSwicm91dGluZ0tleXMiOlsiZGlkOmtleTp6Nk1rbzF0UmI2U0tONUNQdTk5eWtpUU1OWm04dlVjSmR5UFNCajZ6OFVGU3FVdVoiLCJkaWQ6a2V5Ono2TWtmZlJEZ2JoNkdMTDV6QVhqaHI2MWMxd0hlVDlNNHpwTGFTUUJ5UVF2cWpDVCJdLCJzZXJ2aWNlRW5kcG9pbnQiOiJodHRwczovL3Byb3Zlbi5tZWRpYXRvci5pbmRpY2lvdGVjaC5pbyJ9XSwibGFiZWwiOiJQcm92ZW4ifQ==
+
+Notes/Downloads:
+
+- Specific to one iOS app
